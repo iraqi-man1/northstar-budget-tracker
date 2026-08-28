@@ -8,10 +8,6 @@ A production-ready personal budget tracker built with React, TypeScript, Vite, a
 
 - Website: [northstar-budget-ali-ahmed.netlify.app](https://northstar-budget-ali-ahmed.netlify.app)
 - Netlify project: [northstar-budget-ali-ahmed](https://app.netlify.com/projects/northstar-budget-ali-ahmed)
-- Supabase project ref: `hrbkapfpfkbyybojasmq`
-- Password reset route: `https://northstar-budget-ali-ahmed.netlify.app/auth/reset`
-
-The database migrations, RLS policies, email/password authentication, Auth site URL, confirmation and password-reset redirect allow lists, Netlify environment variables, and production deploy are live.
 
 ## What is included
 
