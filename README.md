@@ -22,6 +22,16 @@ A production-ready personal budget tracker built with React, TypeScript, Vite, a
 - JSON backup and filtered transaction CSV export.
 - Netlify and Vercel SPA routing configuration.
 
+## Language and currency
+
+Open **Settings → Profile** to choose the account language and currency. The preference is saved to the user profile in Supabase, so it follows the user across signed-in devices.
+
+- **English** uses the standard left-to-right interface.
+- **العربية** enables the complete Arabic interface with a native right-to-left layout.
+- **IQD** formats every displayed and entered monetary value with dot thousand separators, for example `1.000`, `10.000`, `100.000`, and `1.000.000 IQD`.
+
+Financial records always remain in Supabase PostgreSQL; browser storage is used only to make the language choice available before sign-in and while the profile loads.
+
 ## Financial rules
 
 Northstar calculates:
