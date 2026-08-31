@@ -4,7 +4,7 @@ import type { BudgetData, Transaction } from "../types";
 
 function fixture(): BudgetData {
   return {
-    profile: { user_id: "u", full_name: "Test", avatar_url: null, currency: "USD", theme: "system", created_at: "", updated_at: "" },
+    profile: { user_id: "u", full_name: "Test", avatar_url: null, currency: "USD", theme: "system", language: "en", created_at: "", updated_at: "" },
     incomeSources: [], categories: [],
     income: [
       { id: "i1", user_id: "u", source_id: null, amount: 5000, received_on: new Date().toISOString().slice(0, 10), description: "Salary", notes: null, created_at: "", updated_at: "" },

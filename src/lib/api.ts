@@ -1,6 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 import { getSupabase } from "./supabase";
-import type { BudgetData, ExpenseCategory, IncomeSource, Profile, ThemePreference } from "../types";
+import type { AppLanguage, BudgetData, ExpenseCategory, IncomeSource, Profile, ThemePreference } from "../types";
 
 function unwrap<T>(result: { data: T | null; error: { message: string } | null }, fallback?: T): T {
   if (result.error) throw new Error(result.error.message);
@@ -17,7 +17,7 @@ export async function ensureProfile(user: User) {
   const fullName = user.user_metadata.full_name || user.user_metadata.name || user.email?.split("@")[0] || "";
   const created = await client
     .from("profiles")
-    .insert({ user_id: user.id, full_name: fullName, avatar_url: user.user_metadata.avatar_url || null })
+    .insert({ user_id: user.id, full_name: fullName, avatar_url: user.user_metadata.avatar_url || null, language: user.user_metadata.language === "ar" ? "ar" : "en" })
     .select("*")
     .single();
   return unwrap(created) as Profile;
@@ -53,7 +53,7 @@ export async function callRpc(name: string, args: Record<string, unknown>) {
   return result.data;
 }
 
-export async function updateProfile(userId: string, values: { full_name: string; currency: string; theme: ThemePreference }) {
+export async function updateProfile(userId: string, values: { full_name: string; currency: string; theme: ThemePreference; language: AppLanguage }) {
   const result = await getSupabase().from("profiles").update(values).eq("user_id", userId).select("*").single();
   return unwrap(result) as Profile;
 }

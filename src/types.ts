@@ -1,4 +1,5 @@
 export type ThemePreference = "light" | "dark" | "system";
+export type AppLanguage = "en" | "ar";
 
 export interface Profile {
   user_id: string;
@@ -6,6 +7,7 @@ export interface Profile {
   avatar_url: string | null;
   currency: string;
   theme: ThemePreference;
+  language: AppLanguage;
   created_at: string;
   updated_at: string;
 }
@@ -126,4 +128,5 @@ export const currencies = [
   { code: "INR", name: "Indian Rupee", symbol: "₹" },
   { code: "PKR", name: "Pakistani Rupee", symbol: "₨" },
   { code: "AED", name: "UAE Dirham", symbol: "د.إ" },
+  { code: "IQD", name: "Iraqi Dinar", symbol: "IQD" },
 ] as const;

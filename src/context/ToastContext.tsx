@@ -1,5 +1,6 @@
 import { CheckCircle2, CircleAlert, Info, X } from "lucide-react";
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { useLanguage } from "./LanguageContext";
 
 type ToastKind = "success" | "error" | "info";
 interface ToastItem { id: number; message: string; kind: ToastKind }
@@ -8,6 +9,7 @@ interface ToastContextValue { toast: (message: string, kind?: ToastKind) => void
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
+  const { t } = useLanguage();
   const [items, setItems] = useState<ToastItem[]>([]);
   const remove = useCallback((id: number) => setItems((current) => current.filter((item) => item.id !== id)), []);
   const toast = useCallback((message: string, kind: ToastKind = "success") => {
@@ -24,7 +26,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div className={`toast toast--${item.kind}`} key={item.id}>
             {item.kind === "success" ? <CheckCircle2 /> : item.kind === "error" ? <CircleAlert /> : <Info />}
             <span>{item.message}</span>
-            <button onClick={() => remove(item.id)} aria-label="Dismiss notification"><X /></button>
+            <button onClick={() => remove(item.id)} aria-label={t("Dismiss notification")}><X /></button>
           </div>
         ))}
       </div>

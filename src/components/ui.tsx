@@ -18,6 +18,8 @@ import {
   type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from "react";
+import { useLanguage } from "../context/LanguageContext";
+import { formatIqdInput, normalizeIqdInput } from "../lib/format";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 
@@ -50,6 +52,7 @@ export function Modal({ open, onClose, title, eyebrow, children, footer, size = 
   footer?: ReactNode;
   size?: "small" | "medium" | "large";
 }) {
+  const { t } = useLanguage();
   const dialogRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
 
@@ -77,7 +80,7 @@ export function Modal({ open, onClose, title, eyebrow, children, footer, size = 
       <div className={`modal modal--${size}`} role="dialog" aria-modal="true" aria-labelledby="modal-title" tabIndex={-1} ref={dialogRef}>
         <header className="modal-header">
           <div>{eyebrow && <span className="eyebrow">{eyebrow}</span>}<h2 id="modal-title">{title}</h2></div>
-          <IconButton label="Close" onClick={onClose}><X /></IconButton>
+          <IconButton label={t("Close")} onClick={onClose}><X /></IconButton>
         </header>
         <div className="modal-body">{children}</div>
         {footer && <footer className="modal-footer">{footer}</footer>}
@@ -95,10 +98,11 @@ export function ConfirmDialog({ open, onClose, onConfirm, title, description, co
   confirmLabel?: string;
   busy?: boolean;
 }) {
+  const { t } = useLanguage();
   return (
     <Modal open={open} onClose={onClose} title={title} size="small">
       <div className="confirm-message"><span><AlertTriangle /></span><p>{description}</p></div>
-      <div className="modal-actions"><Button variant="secondary" onClick={onClose}>Cancel</Button><Button variant="danger" loading={busy} onClick={onConfirm}>{confirmLabel}</Button></div>
+      <div className="modal-actions"><Button variant="secondary" onClick={onClose}>{t("Cancel")}</Button><Button variant="danger" loading={busy} onClick={onConfirm}>{t(confirmLabel)}</Button></div>
     </Modal>
   );
 }
@@ -120,13 +124,18 @@ export function Select({ className = "", children, ...props }: SelectHTMLAttribu
 }
 
 export function MoneyInput({ currency, ...props }: InputHTMLAttributes<HTMLInputElement> & { currency: string }) {
-  return <span className="money-input"><span>{currency}</span><Input type="number" min="0.01" step="0.01" inputMode="decimal" {...props} /></span>;
+  if (currency === "IQD") {
+    const { value, onChange, ...inputProps } = props;
+    return <span className="money-input money-input--iqd" dir="ltr"><Input type="text" inputMode="numeric" pattern="[0-9.]*" value={formatIqdInput(value)} onChange={(event) => { event.currentTarget.value = normalizeIqdInput(event.currentTarget.value); onChange?.(event); }} {...inputProps} /><span>IQD</span></span>;
+  }
+  return <span className="money-input" dir="ltr"><span>{currency}</span><Input type="number" min="0.01" step="0.01" inputMode="decimal" {...props} /></span>;
 }
 
 export function ColorInput({ value, onChange, label = "Color" }: { value: string; onChange: (value: string) => void; label?: string }) {
+  const { t } = useLanguage();
   const id = useId();
   const colors = ["#2DAA79", "#477EEA", "#6F7DFF", "#14A6A6", "#EE8D5A", "#E65B65", "#C86BDD", "#D29B32"];
-  return <div className="field"><span className="field-label">{label}</span><div className="color-picker" id={id}>{colors.map((color) => <button key={color} type="button" className={value === color ? "active" : ""} style={{ backgroundColor: color }} aria-label={`Use ${color}`} onClick={() => onChange(color)} />)}<label className="custom-color" style={{ backgroundColor: value }}><input type="color" value={value} onChange={(event) => onChange(event.target.value)} aria-label="Custom color" /></label></div></div>;
+  return <div className="field"><span className="field-label">{t(label)}</span><div className="color-picker" id={id}>{colors.map((color) => <button key={color} type="button" className={value === color ? "active" : ""} style={{ backgroundColor: color }} aria-label={`${t("Color")} ${color}`} onClick={() => onChange(color)} />)}<label className="custom-color" style={{ backgroundColor: value }}><input type="color" value={value} onChange={(event) => onChange(event.target.value)} aria-label={t("Color")} /></label></div></div>;
 }
 
 export function PageHeader({ eyebrow, title, description, actions }: { eyebrow?: string; title: string; description: string; actions?: ReactNode }) {
@@ -134,11 +143,13 @@ export function PageHeader({ eyebrow, title, description, actions }: { eyebrow?:
 }
 
 export function SearchInput({ value, onChange, placeholder = "Search…" }: { value: string; onChange: (value: string) => void; placeholder?: string }) {
-  return <label className="search-input"><Search /><input value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} aria-label={placeholder} />{value && <button onClick={() => onChange("")} aria-label="Clear search"><X /></button>}</label>;
+  const { t } = useLanguage();
+  return <label className="search-input"><Search /><input value={value} onChange={(event) => onChange(event.target.value)} placeholder={t(placeholder)} aria-label={t(placeholder)} />{value && <button onClick={() => onChange("")} aria-label={t("Clear search")}><X /></button>}</label>;
 }
 
 export function SortSelect({ value, onChange, children }: { value: string; onChange: (value: string) => void; children: ReactNode }) {
-  return <label className="sort-select"><ArrowDownUp /><select value={value} onChange={(event) => onChange(event.target.value)} aria-label="Sort order">{children}</select><ChevronDown /></label>;
+  const { t } = useLanguage();
+  return <label className="sort-select"><ArrowDownUp /><select value={value} onChange={(event) => onChange(event.target.value)} aria-label={t("Sort order")}>{children}</select><ChevronDown /></label>;
 }
 
 export function EmptyState({ icon: Icon = Inbox, title, description, action }: { icon?: LucideIcon; title: string; description: string; action?: ReactNode }) {

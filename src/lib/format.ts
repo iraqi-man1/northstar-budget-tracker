@@ -1,17 +1,42 @@
 import { format, parseISO } from "date-fns";
+import { ar, enUS } from "date-fns/locale";
+
+let formattingLanguage: "en" | "ar" = "en";
+
+export function setFormattingLanguage(language: "en" | "ar") {
+  formattingLanguage = language;
+}
+
+export function getFormattingLocale() {
+  return formattingLanguage === "ar" ? "ar-IQ" : "en-US";
+}
+
+export function normalizeIqdInput(value: string) {
+  return value.replace(/[^0-9]/g, "").replace(/^0+(?=\d)/, "");
+}
+
+export function formatIqdInput(value: string | number | readonly string[] | undefined) {
+  const normalized = normalizeIqdInput(String(value ?? ""));
+  return normalized ? normalized.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "";
+}
 
 export function formatCurrency(value: number, currency = "USD", compact = false) {
-  return new Intl.NumberFormat(undefined, {
+  const amount = Number(value) || 0;
+  if (currency === "IQD") {
+    return `${Math.round(amount).toLocaleString("de-DE", { maximumFractionDigits: 0 })} IQD`;
+  }
+  return new Intl.NumberFormat(getFormattingLocale(), {
     style: "currency",
     currency,
     notation: compact ? "compact" : "standard",
     maximumFractionDigits: compact ? 1 : 2,
-  }).format(Number(value) || 0);
+  }).format(amount);
 }
 
 export function formatDate(value: string, pattern = "MMM d, yyyy") {
   try {
-    return format(parseISO(value), pattern);
+    const localizedPattern = formattingLanguage === "ar" && pattern === "MMM d, yyyy" ? "d MMM yyyy" : pattern;
+    return format(parseISO(value), localizedPattern, { locale: formattingLanguage === "ar" ? ar : enUS });
   } catch {
     return value;
   }
@@ -34,6 +59,10 @@ export function initials(name?: string | null) {
 
 export function humanize(value: string) {
   return value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+export function formatMonth(value: Date, includeYear = false) {
+  return format(value, includeYear ? "MMMM yyyy" : "MMM", { locale: formattingLanguage === "ar" ? ar : enUS });
 }
 
 export function percent(value: number, target: number) {

@@ -3,6 +3,7 @@ import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { Brand } from "./components/Brand";
 import { useAuth } from "./context/AuthContext";
+import { useLanguage } from "./context/LanguageContext";
 
 const AuthPage = lazy(() => import("./pages/AuthPage").then((module) => ({ default: module.AuthPage })));
 const AuthCallback = lazy(() => import("./pages/AuthCallback").then((module) => ({ default: module.AuthCallback })));
@@ -16,7 +17,8 @@ const SettingsPage = lazy(() => import("./pages/SettingsPage").then((module) => 
 const TransactionsPage = lazy(() => import("./pages/TransactionsPage").then((module) => ({ default: module.TransactionsPage })));
 
 function LoadingScreen() {
-  return <main className="callback-page"><Brand /><span className="callback-spinner" /><h1>Restoring your workspace…</h1><p>Your secure session is being refreshed.</p></main>;
+  const { t } = useLanguage();
+  return <main className="callback-page"><Brand /><span className="callback-spinner" /><h1>{t("Restoring your workspace…")}</h1><p>{t("Your secure session is being refreshed.")}</p></main>;
 }
 
 function ProtectedRoute() {

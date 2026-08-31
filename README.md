@@ -1,6 +1,6 @@
 # Northstar Budget
 
-A production-ready personal budget tracker built with React, TypeScript, Vite, and Supabase. Northstar tracks income, expenses, savings accounts, goals, and an immutable activity ledger in a responsive light/dark interface.
+A production-ready personal budget tracker built with React, TypeScript, Vite, and Supabase. Northstar tracks income, expenses, savings accounts, goals, and an immutable activity ledger in a responsive bilingual English/Arabic interface with light and dark modes.
 
 [Open the live app](https://northstar-budget-ali-ahmed.netlify.app) · [View the Supabase schema](supabase/migrations/20260827122103_initial_budget_schema.sql) · [Review the financial tests](src/lib/finance.test.ts)
 
@@ -17,6 +17,8 @@ A production-ready personal budget tracker built with React, TypeScript, Vite, a
 - Full create, edit, delete, search, sort, and filter workflows for income, expenses, savings accounts, goals, sources, and categories.
 - Atomic deposits, withdrawals, savings transfers, and goal contributions through guarded PostgreSQL functions.
 - Responsive desktop sidebar, tablet drawer, mobile navigation, accessible dialogs, toasts, empty states, loaders, validation, confirmation dialogs, and light/dark/system themes.
+- Full Arabic localization with an account-synced language preference, native RTL layout, localized dates and numbers, and mirrored navigation and controls.
+- Iraqi Dinar (IQD) support with dot-grouped monetary input and display formatting such as `1.000.000 IQD`.
 - JSON backup and filtered transaction CSV export.
 - Netlify and Vercel SPA routing configuration.
 
@@ -86,7 +88,7 @@ In **Authentication → URL Configuration**:
   https://YOUR_PRODUCTION_DOMAIN/auth/reset
   ```
 
-The signup form passes the user’s name as non-authoritative profile metadata. A database trigger creates the matching `profiles` row with the new Auth UUID. Authorization never trusts user metadata: every financial table uses the Auth UUID and RLS ownership checks.
+The signup form passes the user’s name and initial language preference as non-authoritative profile metadata. A database trigger creates the matching `profiles` row with the new Auth UUID. Authorization never trusts user metadata: every financial table uses the Auth UUID and RLS ownership checks.
 
 Supabase owns password hashing and the session lifecycle. The browser client persists only Auth access/refresh tokens and automatically refreshes them; all financial records remain in PostgreSQL as the source of truth. Forgot Password calls Supabase’s recovery-email API and the recovery link opens `/auth/reset`, where the signed recovery session can securely set a new password.
 
@@ -124,7 +126,7 @@ npm test
 npm run build
 ```
 
-The unit tests explicitly verify the Available Balance formula, savings/goal allocation totals, withdrawal/deposit net flow, transfer exclusion, and modal focus retention during controlled-input rerenders.
+The unit tests explicitly verify the Available Balance formula, savings/goal allocation totals, withdrawal/deposit net flow, transfer exclusion, modal focus retention during controlled-input rerenders, Arabic RTL switching, and IQD thousand-separator formatting.
 
 Local database linting requires Docker Desktop:
 
@@ -172,7 +174,7 @@ The included `vercel.json` sends client-side routes to `index.html`.
 ```text
 src/
   components/       Shared layout, navigation, dialogs, tables, icons
-  context/          Auth, theme, and toast providers
+  context/          Auth, language/RTL, theme, and toast providers
   hooks/            Supabase query refresh and mutation helpers
   lib/              Supabase client, API, calculations, formatting, tests
   pages/            Dashboard, Income, Expenses, Savings, Goals, Transactions, Settings

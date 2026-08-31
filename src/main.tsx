@@ -6,6 +6,7 @@ import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ToastProvider } from "./context/ToastContext";
+import { LanguageProvider } from "./context/LanguageContext";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -17,14 +18,16 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
-      <ToastProvider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <BrowserRouter><App /></BrowserRouter>
-          </QueryClientProvider>
-        </AuthProvider>
-      </ToastProvider>
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <BrowserRouter><App /></BrowserRouter>
+            </QueryClientProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   </StrictMode>,
 );

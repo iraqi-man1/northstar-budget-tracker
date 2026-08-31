@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
+import type { AppLanguage } from "../types";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 
 interface AuthContextValue {
   session: Session | null;
   user: User | null;
   loading: boolean;
-  signUp: (name: string, email: string, password: string) => Promise<{ requiresEmailConfirmation: boolean }>;
+  signUp: (name: string, email: string, password: string, language: AppLanguage) => Promise<{ requiresEmailConfirmation: boolean }>;
   signIn: (email: string, password: string) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
@@ -47,13 +48,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       user: session?.user ?? null,
       loading,
-      signUp: async (name, email, password) => {
+      signUp: async (name, email, password, language) => {
         if (!supabase) throw new Error("Supabase is not configured.");
         const { data, error } = await supabase.auth.signUp({
           email: email.trim().toLowerCase(),
           password,
           options: {
-            data: { full_name: name.trim() },
+            data: { full_name: name.trim(), language },
             emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
         });

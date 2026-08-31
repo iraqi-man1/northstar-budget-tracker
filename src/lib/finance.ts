@@ -1,13 +1,13 @@
 import {
   eachMonthOfInterval,
   endOfMonth,
-  format,
   isSameMonth,
   parseISO,
   startOfMonth,
   subMonths,
 } from "date-fns";
 import type { BudgetData, Expense } from "../types";
+import { formatMonth } from "./format";
 
 const sum = (values: number[]) => values.reduce((total, value) => total + Number(value || 0), 0);
 
@@ -44,7 +44,7 @@ export function monthlySeries(data: BudgetData, months = 6) {
           return 0;
         }),
     );
-    return { month: format(month, "MMM"), fullMonth: format(month, "MMMM yyyy"), income, expenses, savings };
+    return { month: formatMonth(month), fullMonth: formatMonth(month, true), income, expenses, savings };
   });
 }
 
@@ -57,7 +57,7 @@ export function currentMonthSummary(data: BudgetData) {
   const previousExpenses = sum(data.expenses.filter((item) => isSameMonth(parseISO(item.spent_on), previous)).map((item) => item.amount));
   const delta = (current: number, prior: number) => (prior === 0 ? (current > 0 ? 100 : 0) : ((current - prior) / prior) * 100);
   return {
-    label: format(now, "MMMM yyyy"),
+    label: formatMonth(now, true),
     currentIncome,
     currentExpenses,
     net: currentIncome - currentExpenses,
